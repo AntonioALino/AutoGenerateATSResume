@@ -4,6 +4,12 @@ import { ExtraSectionField, EXTRA_SECTION_FIELDS } from '../../../../core/consta
 import { ExtraSectionKey } from '../../../../core/models/resume.model';
 import { ResumeFormService } from '../../../../core/services/resume-form.service';
 
+/**
+ * As 5 seções extras têm FormGroups de formatos diferentes, mas todos os campos são
+ * `FormControl<string>` — este alias descreve exatamente essa forma comum, sem recorrer a `any`.
+ */
+type ExtraEntryFormGroup = FormGroup<Record<string, FormControl<string>>>;
+
 @Component({
   selector: 'app-extra-section-list',
   imports: [ReactiveFormsModule],
@@ -17,18 +23,17 @@ export class ExtraSectionList {
 
   protected readonly fields = computed<ExtraSectionField[]>(() => EXTRA_SECTION_FIELDS[this.sectionKey()]);
 
-  /**
-   * As 5 seções extras têm FormArrays de formatos diferentes; como este componente é
-   * genérico (trabalha por nome de campo em runtime, vindo de `fields()`), tipamos a
-   * saída como `FormGroup<any>` — a segurança de tipos aqui vem da configuração em
-   * `EXTRA_SECTION_FIELDS`, não do compilador.
-   */
-  protected readonly entries = computed<FormArray<FormGroup<any>>>(
-    () => this.resumeForm.form.controls.extraSections.controls[this.sectionKey()] as unknown as FormArray<FormGroup<any>>,
+  protected readonly entries = computed<FormArray<ExtraEntryFormGroup>>(
+    () =>
+      this.resumeForm.form.controls.extraSections.controls[this.sectionKey()] as unknown as FormArray<ExtraEntryFormGroup>,
   );
 
-  protected controlFor(entry: FormGroup<any>, name: string): FormControl<string> {
-    return entry.controls[name] as FormControl<string>;
+  protected controlFor(entry: ExtraEntryFormGroup, name: string): FormControl<string> {
+    return entry.controls[name];
+  }
+
+  protected fieldId(field: ExtraSectionField, entryIndex: number): string {
+    return `${this.sectionKey()}-${field.name}-${entryIndex}`;
   }
 
   protected addEntry(): void {

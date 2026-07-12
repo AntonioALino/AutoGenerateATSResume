@@ -104,6 +104,12 @@ label.checkbox {
   gap: 0.4rem;
 }
 
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
 input,
 textarea {
   font: inherit;
