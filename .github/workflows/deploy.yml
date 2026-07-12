@@ -10,6 +10,20 @@ on:
       - main
 
 jobs:
+  validate-source-branch:
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    name: Validate PR Resource Branch
+    steps:
+      - name: Ensure PR comes from develop
+        run: |
+          if [ "${{ github.head_ref }}" != "develop" ]; then
+            echo "PRs para main só são permitidas a partir da branch develop."
+            echo "Branch de origem detectada: ${{ github.head_ref }}"
+            exit 1
+          fi
+          echo "OK: PR vindo de develop."
+  
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
