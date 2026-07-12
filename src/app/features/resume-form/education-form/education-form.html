@@ -1,0 +1,42 @@
+<fieldset class="field-grid">
+  <legend>Formação acadêmica</legend>
+
+  @for (entry of resumeForm.form.controls.education.controls; track entry; let eduIndex = $index) {
+    <div class="entry-card" [formGroup]="entry">
+      <div class="entry-card__row">
+        <label>
+          Instituição
+          <input type="text" formControlName="institution" placeholder="Universidade de São Paulo" />
+        </label>
+
+        <label>
+          Curso
+          <input type="text" formControlName="course" placeholder="Ciência da Computação" />
+        </label>
+      </div>
+
+      <div class="entry-card__row">
+        <label>
+          Início
+          <input type="text" formControlName="startDate" placeholder="2019" />
+        </label>
+
+        <label>
+          Fim
+          <input type="text" formControlName="endDate" placeholder="2023" />
+        </label>
+
+        <label class="checkbox">
+          <input type="checkbox" formControlName="current" />
+          Em andamento
+        </label>
+      </div>
+
+      <button type="button" class="entry-card__remove btn-danger" (click)="resumeForm.removeEducation(eduIndex)">
+        Remover formação
+      </button>
+    </div>
+  }
+
+  <button type="button" (click)="resumeForm.addEducation()">+ Adicionar formação</button>
+</fieldset>

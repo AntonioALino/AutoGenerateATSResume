@@ -1,0 +1,25 @@
+<fieldset class="field-grid">
+  <legend>Habilidades técnicas</legend>
+
+  @if (resumeForm.form.controls.skills.controls.length > 0) {
+    <div class="chips">
+      @for (skill of resumeForm.form.controls.skills.controls; track skill; let skillIndex = $index) {
+        <span class="chip">
+          {{ skill.value }}
+          <button type="button" (click)="resumeForm.removeSkill(skillIndex)" aria-label="Remover habilidade">×</button>
+        </span>
+      }
+    </div>
+  }
+
+  <label>
+    Adicionar habilidade
+    <input
+      #skillInput
+      type="text"
+      placeholder="Ex: TypeScript (Enter para adicionar)"
+      (keydown.enter)="$event.preventDefault(); resumeForm.addSkill(skillInput.value); skillInput.value = ''"
+    />
+  </label>
+  <button type="button" (click)="resumeForm.addSkill(skillInput.value); skillInput.value = ''">+ Adicionar</button>
+</fieldset>

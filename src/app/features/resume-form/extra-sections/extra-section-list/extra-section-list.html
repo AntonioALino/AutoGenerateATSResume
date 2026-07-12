@@ -1,0 +1,18 @@
+@for (entry of entries().controls; track entry; let entryIndex = $index) {
+  <div class="entry-card" [formGroup]="entry">
+    @for (field of fields(); track field.name) {
+      <label>
+        {{ field.label }}
+        @if (field.multiline) {
+          <textarea [formControl]="controlFor(entry, field.name)" rows="3"></textarea>
+        } @else {
+          <input type="text" [formControl]="controlFor(entry, field.name)" />
+        }
+      </label>
+    }
+
+    <button type="button" class="entry-card__remove btn-danger" (click)="removeEntry(entryIndex)">Remover item</button>
+  </div>
+}
+
+<button type="button" (click)="addEntry()">+ Adicionar item</button>

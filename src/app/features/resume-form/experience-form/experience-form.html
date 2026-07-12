@@ -1,0 +1,57 @@
+<fieldset class="field-grid">
+  <legend>Experiência profissional</legend>
+
+  @for (entry of resumeForm.form.controls.experience.controls; track entry; let expIndex = $index) {
+    <div class="entry-card" [formGroup]="entry">
+      <div class="entry-card__row">
+        <label>
+          Empresa
+          <input type="text" formControlName="company" placeholder="Acme Corp" />
+        </label>
+
+        <label>
+          Cargo
+          <input type="text" formControlName="role" placeholder="Desenvolvedora Backend" />
+        </label>
+      </div>
+
+      <div class="entry-card__row">
+        <label>
+          Início
+          <input type="text" formControlName="startDate" placeholder="Jan 2022" />
+        </label>
+
+        <label>
+          Fim
+          <input type="text" formControlName="endDate" placeholder="Mar 2024" />
+        </label>
+
+        <label class="checkbox">
+          <input type="checkbox" formControlName="current" />
+          Emprego atual
+        </label>
+      </div>
+
+      <div class="bullets">
+        <p class="bullets__label">Descrição (bullets)</p>
+
+        @for (bullet of entry.controls.bullets.controls; track bullet; let bulletIndex = $index) {
+          <div class="bullets__row">
+            <input type="text" [formControl]="bullet" placeholder="Reduzi o tempo de build em 40% ao..." />
+            <button type="button" class="btn-danger" (click)="resumeForm.removeBullet(expIndex, bulletIndex)">
+              Remover
+            </button>
+          </div>
+        }
+
+        <button type="button" (click)="resumeForm.addBullet(expIndex)">+ Adicionar bullet</button>
+      </div>
+
+      <button type="button" class="entry-card__remove btn-danger" (click)="resumeForm.removeExperience(expIndex)">
+        Remover experiência
+      </button>
+    </div>
+  }
+
+  <button type="button" (click)="resumeForm.addExperience()">+ Adicionar experiência</button>
+</fieldset>

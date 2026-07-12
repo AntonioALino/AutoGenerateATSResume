@@ -1,0 +1,85 @@
+<article class="resume-preview">
+  <header class="resume-preview__header">
+    <h1>{{ resumeForm.resumeData().personalInfo.fullName || 'Seu nome' }}</h1>
+    @if (contactItems().length > 0) {
+      <p class="contact-line">
+        @for (item of contactItems(); track item; let last = $last) {
+          <span>{{ item }}</span>
+          @if (!last) {
+            <span> • </span>
+          }
+        }
+      </p>
+    }
+  </header>
+
+  @for (key of visibleSections(); track key) {
+    @switch (key) {
+      @case ('summary') {
+        <section class="resume-preview__section">
+          <h2>Resumo</h2>
+          <p>{{ resumeForm.resumeData().summary }}</p>
+        </section>
+      }
+
+      @case ('experience') {
+        <section class="resume-preview__section">
+          <h2>Experiência Profissional</h2>
+          @for (entry of resumeForm.resumeData().experience; track entry) {
+            <div class="preview-entry">
+              <div class="preview-entry__title-row">
+                <strong>{{ entry.role || 'Cargo' }}</strong>
+                <span> — {{ entry.company || 'Empresa' }}</span>
+                <span class="preview-entry__period">{{ entry.startDate }} – {{ entry.current ? 'Atual' : entry.endDate }}</span>
+              </div>
+              <ul>
+                @for (bullet of entry.bullets; track bullet) {
+                  @if (bullet.trim()) {
+                    <li>{{ bullet }}</li>
+                  }
+                }
+              </ul>
+            </div>
+          }
+        </section>
+      }
+
+      @case ('education') {
+        <section class="resume-preview__section">
+          <h2>Formação Acadêmica</h2>
+          @for (entry of resumeForm.resumeData().education; track entry) {
+            <div class="preview-entry">
+              <div class="preview-entry__title-row">
+                <strong>{{ entry.course || 'Curso' }}</strong>
+                <span> — {{ entry.institution || 'Instituição' }}</span>
+                <span class="preview-entry__period">{{ entry.startDate }} – {{ entry.current ? 'Atual' : entry.endDate }}</span>
+              </div>
+            </div>
+          }
+        </section>
+      }
+
+      @case ('skills') {
+        <section class="resume-preview__section">
+          <h2>Habilidades Técnicas</h2>
+          <p>{{ resumeForm.resumeData().skills.join(' · ') }}</p>
+        </section>
+      }
+
+      @default {
+        <section class="resume-preview__section">
+          <h2>{{ extraLabels[key] }}</h2>
+          @for (entry of extraEntries(key); track entry) {
+            <div class="preview-entry">
+              @for (field of extraFields(key); track field.name) {
+                @if (entry[field.name]) {
+                  <p><strong>{{ field.label }}:</strong> {{ entry[field.name] }}</p>
+                }
+              }
+            </div>
+          }
+        </section>
+      }
+    }
+  }
+</article>

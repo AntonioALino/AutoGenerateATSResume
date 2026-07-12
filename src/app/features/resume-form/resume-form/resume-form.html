@@ -1,0 +1,17 @@
+<app-personal-info-form />
+<app-summary-form />
+<app-experience-form />
+<app-education-form />
+<app-skills-form />
+
+@for (key of resumeForm.activeExtraSections(); track key) {
+  <section class="extra-section">
+    <div class="extra-section__header">
+      <h3>{{ extraLabels[key] }}</h3>
+      <button type="button" class="btn-danger" (click)="resumeForm.removeExtraSection(key)">Remover seção</button>
+    </div>
+    <app-extra-section-list [sectionKey]="key" />
+  </section>
+}
+
+<app-extra-section-picker />
