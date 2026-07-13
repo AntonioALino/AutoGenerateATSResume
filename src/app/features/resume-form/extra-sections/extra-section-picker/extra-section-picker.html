@@ -1,0 +1,8 @@
+@if (availableSections().length > 0) {
+  <div class="section-picker">
+    <span class="section-picker__label">+ Adicionar seção:</span>
+    @for (section of availableSections(); track section.key) {
+      <button type="button" (click)="resumeForm.addExtraSection(section.key)">{{ section.label }}</button>
+    }
+  </div>
+}
