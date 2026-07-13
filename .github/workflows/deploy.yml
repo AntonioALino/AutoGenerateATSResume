@@ -10,8 +10,67 @@ on:
       - main
 
 jobs:
-  build_and_deploy_job:
+  validate_source_branch:
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    name: Validate PR source branch
+    steps:
+      - name: Ensure PR comes from develop
+        run: |
+          if [ "${{ github.head_ref }}" != "develop" || != "main"]; then
+            echo "PRs para main só são permitidas a partir da branch develop ou main."
+            echo "Branch de origem detectada: ${{ github.head_ref }}"
+            exit 1
+          fi
+          echo "OK: PR vindo de develop ou main."
+
+  quality_gate:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Test & SonarCloud Quality Gate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm test -- --no-watch --coverage
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Check Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  build_and_deploy_job:
+    needs: [validate_source_branch, quality_gate]
+    if: |
+      always() &&
+      (
+        (github.event_name == 'push' && needs.quality_gate.result == 'success') ||
+        (
+          github.event_name == 'pull_request' &&
+          github.event.action != 'closed' &&
+          needs.validate_source_branch.result == 'success' &&
+          needs.quality_gate.result == 'success'
+        )
+      )
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
@@ -19,21 +78,30 @@ jobs:
         with:
           submodules: true
           lfs: false
-      - name: Build And Deploy
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular app
+        run: npm run build -- --configuration production
+
+      - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
-        env:
-          NODE_VERSION: 24.15.0
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_NICE_GRASS_08ADDBA10 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "dist/autogenatsresume" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+          app_location: "dist/ats-resume-generator"
+          api_location: ""
+          output_location: ""
+          skip_app_build: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
