@@ -1,0 +1,33 @@
+<fieldset [formGroup]="resumeForm.form.controls.personalInfo" class="field-grid">
+  <legend>Dados pessoais</legend>
+
+  <label>
+    Nome completo
+    <input type="text" formControlName="fullName" placeholder="Ana Oliveira" />
+  </label>
+
+  <label>
+    E-mail
+    <input type="email" formControlName="email" placeholder="ana@email.com" />
+  </label>
+
+  <label>
+    Telefone
+    <input type="tel" formControlName="phone" placeholder="(11) 91234-5678" />
+  </label>
+
+  <label>
+    Localização
+    <input type="text" formControlName="location" placeholder="São Paulo, SP" />
+  </label>
+
+  <label>
+    LinkedIn
+    <input type="text" formControlName="linkedin" placeholder="linkedin.com/in/ana-oliveira" />
+  </label>
+
+  <label>
+    GitHub
+    <input type="text" formControlName="github" placeholder="github.com/anaoliveira" />
+  </label>
+</fieldset>

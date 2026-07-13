@@ -1,0 +1,11 @@
+.export-panel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.export-panel__hint {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
