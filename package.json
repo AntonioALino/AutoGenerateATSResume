@@ -9,6 +9,9 @@
     "test": "ng test",
     "lint": "ng lint"
   },
+  "engines": {
+    "node": ">=22.22.3"
+  },
   "private": true,
   "packageManager": "npm@11.13.0",
   "dependencies": {
