@@ -37,7 +37,15 @@
 
         @for (bullet of entry.controls.bullets.controls; track bullet; let bulletIndex = $index) {
           <div class="bullets__row">
-            <input type="text" [formControl]="bullet" placeholder="Reduzi o tempo de build em 40% ao..." />
+            <label class="visually-hidden" [attr.for]="'bullet-' + expIndex + '-' + bulletIndex">
+              Bullet {{ bulletIndex + 1 }} da experiência {{ expIndex + 1 }}
+            </label>
+            <input
+              type="text"
+              [id]="'bullet-' + expIndex + '-' + bulletIndex"
+              [formControl]="bullet"
+              placeholder="Reduzi o tempo de build em 40% ao..."
+            />
             <button type="button" class="btn-danger" (click)="resumeForm.removeBullet(expIndex, bulletIndex)">
               Remover
             </button>
